@@ -1,27 +1,17 @@
-import { Observable } from "rxjs";
+import { of } from "rxjs";
+import { map } from "rxjs/operators";
 
-const observable = new Observable((subscriber) => {
-  const id = setInterval(() => {
-    subscriber.next("test");
-    console.log("leak");
-  }, 1000);
-
-  return () => {
-    clearInterval(id);
-  };
-});
+const observable = of(1, 2, 3, 4, 5).pipe(
+  map((value) => {
+    return `$${value}`;
+  })
+);
 
 const subscription = observable.subscribe({
-  next: (value) => {
+  next(value) {
     console.log(value);
   },
-  complete: () => {
-    console.log("completed call!");
-  },
-  error: (error) => {
-    console.error(error);
+  complete() {
+    console.log("Complete");
   },
 });
-setTimeout(() => {
-  subscription.unsubscribe();
-}, 4000);
